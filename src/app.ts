@@ -1,4 +1,5 @@
 import express, { Request, Response } from "express";
+require('dotenv').config();
 
 const app = express();
 
