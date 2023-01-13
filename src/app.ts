@@ -1,4 +1,4 @@
-import express, { ErrorRequestHandler, Request, Response } from "express";
+import express, { Request, Response } from "express";
 import bcrypt from "bcrypt";
 require('dotenv').config();
 
@@ -12,6 +12,13 @@ const PORT = process.env.PORT || 3006
 app.get('/', (__req: Request, res: Response) => res.send('welcome to my app'))
 
 //Auth
+
+export interface User {
+    email: string,
+    name: string,
+    password: string
+} 
+
 app.post('/api/register', async (req: Request, res: Response) => {
     const { email, name, password } = req.body;
 
@@ -19,7 +26,7 @@ app.post('/api/register', async (req: Request, res: Response) => {
         const saltRounds: number = 10;
         const encryptedPassword: string = bcrypt.hashSync(password, saltRounds);
 
-        const newUser: any = {
+        const newUser: User = {
             email,
             name,
             password: encryptedPassword
