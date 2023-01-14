@@ -12,28 +12,25 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const register_service_1 = __importDefault(require("../../../application/services/registerService/register.service"));
-const registerController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const db_1 = require("../../../../config/db");
+const bcrypt_1 = __importDefault(require("bcrypt"));
+const register = (body) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const user = yield (0, register_service_1.default)(req.body);
-        return res.status(200).json({
-            success: true,
-            message: "User registered"
+        const { email, name, password } = body;
+        const saltRounds = 10;
+        const encryptedPassword = bcrypt_1.default.hashSync(password, saltRounds);
+        const newUser = {
+            email,
+            name,
+            password: encryptedPassword
+        };
+        const user = yield db_1.prisma.user.create({
+            data: newUser
         });
+        return user;
     }
-    catch (error) {
-        if (error.code === "P2002") {
-            return res.status(400).json({
-                success: false,
-                message: "User can´t be registered",
-                error: "User cant be registered"
-            });
-        }
-        return res.status(500).json({
-            success: false,
-            message: "User can´t be registered",
-            error: "User cant be registered"
-        });
+    finally {
+        db_1.prisma.$disconnect;
     }
 });
-exports.default = registerController;
+exports.default = register;
