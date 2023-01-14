@@ -1,9 +1,11 @@
 import express, { Request, Response } from "express";
 require('dotenv').config();
+import cors from "cors";
 import registerController from "./auth/infrastructure/controllers/registerController/register.controller";
 
 const app = express();
 app.use(express.json());
+app.use(cors())
 
 const PORT = process.env.PORT || 3006
 
