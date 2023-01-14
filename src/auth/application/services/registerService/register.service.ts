@@ -1,4 +1,6 @@
 import bcrypt from "bcrypt";
+import { UserEntity } from "../../../domain/user.entity";
+import { UserValue } from "../../../domain/User.value";
 import { AuthRepository } from "../../../infrastructure/repository/prismaRepository/auth/auth.repository";
 
 export interface User {
@@ -7,21 +9,15 @@ export interface User {
     password: string
 }
 
-const register = async (body: User): Promise<any> => {
-    const { email, name, password } = body;
-
+const register = async (userDTO: UserEntity): Promise<any> => {
     const saltRounds: number = 10;
-    const encryptedPassword: string = bcrypt.hashSync(password, saltRounds);
+    const encryptedPassword: string = bcrypt.hashSync(userDTO.password, saltRounds);
 
-    const newUser: User = {
-        email,
-        name,
-        password: encryptedPassword
-    };
+    const newUser = new UserValue(userDTO.name, userDTO.email, encryptedPassword);
 
     const authRepository: AuthRepository = new AuthRepository();
-    const user = authRepository.registerUser(newUser);
-
+    const user = await authRepository.registerUser(newUser);
+    
     return user;
 }
 

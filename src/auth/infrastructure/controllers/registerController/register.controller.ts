@@ -1,16 +1,18 @@
 import { Request, Response } from "express";
 import register from "../../../application/services/registerService/register.service";
-
-export interface User {
-    email: string,
-    name: string,
-    password: string
-} 
+import { UserEntity } from "../../../domain/user.entity";
 
 const registerController = async (req: Request, res: Response) => {
     try {
+        let { email, name, password } = req.body;
         
-        const user = await register(req.body);
+        const userDTO: UserEntity = {
+            email,
+            name,
+            password
+        }        
+        
+        const user = await register(userDTO);
         
         return res.status(200).json({
             success: true,
@@ -23,7 +25,7 @@ const registerController = async (req: Request, res: Response) => {
                 message: "User can´t be registered",
                 error: "User cant be registered"
             });
-        }
+        }        
 
         return res.status(500).json({
             success: false,
