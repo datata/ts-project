@@ -10,8 +10,7 @@ export interface User {
 }
 
 const register = async (userDTO: UserEntity): Promise<any> => {
-    const saltRounds: number = 10;
-    const encryptedPassword: string = bcrypt.hashSync(userDTO.password, saltRounds);
+    const encryptedPassword = encryptPassword(userDTO.password);
 
     const newUser = new UserValue(userDTO.name, userDTO.email, encryptedPassword);
 
@@ -21,5 +20,12 @@ const register = async (userDTO: UserEntity): Promise<any> => {
     return user;
 }
 
+const encryptPassword = (password: string) => {
+    const saltRounds: number = 10;
+    const encryptedPassword: string = bcrypt.hashSync(password, saltRounds);
 
-export default register
+    return encryptedPassword;
+}
+
+
+export default register;
